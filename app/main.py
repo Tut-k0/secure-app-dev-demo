@@ -2,8 +2,10 @@ from fastapi import FastAPI, Depends
 from pyodbc import Cursor
 
 from app.database import get_db
+from app.routers import listing
 
 app = FastAPI()
+app.include_router(listing.router)
 
 
 @app.get("/")
@@ -20,4 +22,3 @@ async def say_hi(name):
 async def sql_test(db: Cursor = Depends(get_db)):
     res = db.execute("SELECT @@VERSION;").fetchone()[0]
     return {"sql_version": res}
-
