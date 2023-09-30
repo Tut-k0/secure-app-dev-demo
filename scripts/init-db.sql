@@ -29,7 +29,7 @@ GO
 CREATE TABLE listings (
     listing_id INT IDENTITY(1,1) PRIMARY KEY,
     title NVARCHAR(255) NOT NULL,
-    description TEXT,
+    description varchar(max),
     price DECIMAL(10, 2) NOT NULL,
     seller_id INT NOT NULL,
     FOREIGN KEY (seller_id) REFERENCES users (user_id)
