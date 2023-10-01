@@ -9,7 +9,7 @@ from app.config import config
 from app.database import get_db
 from app.schemas import UserData
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 SECRET_KEY = config.secret_key
 ALGORITHM = config.algorithm
