@@ -68,8 +68,8 @@ async def get_listings(keyword: str | None = None, db: Cursor = Depends(get_db))
         db.execute(query, (keyword_pattern, keyword_pattern))
     else:
         query = "SELECT * FROM listings ORDER BY listing_id;"
+        db.execute(query)
 
-    db.execute(query)
     cols = [column[0] for column in db.description]
     listings = db.fetchall()
 
