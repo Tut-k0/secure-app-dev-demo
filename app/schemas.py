@@ -14,3 +14,9 @@ class Listing(BaseModel):
     description: str
     price: float
     seller_id: int
+
+
+class ListingUpdate(BaseModel):
+    title: str
+    description: str
+    price: float

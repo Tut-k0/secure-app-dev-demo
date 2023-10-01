@@ -1,8 +1,8 @@
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Response
 from pyodbc import Cursor
 
 from app.database import get_db
-from app.schemas import ListingCreate, Listing
+from app.schemas import ListingCreate, Listing, ListingUpdate
 
 router = APIRouter(prefix="/listings", tags=["Listings"])
 
@@ -58,3 +58,50 @@ async def get_listings(keyword: str | None = None, db: Cursor = Depends(get_db))
     listings = db.fetchall()
 
     return [Listing(**dict(zip(cols, row))) for row in listings]
+
+
+@router.put("/{listing_id}", response_model=Listing)
+async def update_listing(
+    listing_id: int,
+    listing_data: ListingUpdate,
+    db: Cursor = Depends(get_db),
+):
+    existing_listing = db.execute("SELECT * FROM listings WHERE listing_id = %s;" % listing_id).fetchone()
+    if not existing_listing:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    # Update the listing data
+    update_query = """
+        UPDATE listings
+        SET title = '%s', description = '%s', price = %f
+        WHERE listing_id = %d;
+        """ % (listing_data.title, listing_data.description, listing_data.price, listing_id)
+    db.execute(update_query)
+    db.commit()
+
+    # Return the updated listing
+    updated_listing = Listing(
+        listing_id=listing_id,
+        title=listing_data.title,
+        description=listing_data.description,
+        price=listing_data.price,
+        seller_id=existing_listing.seller_id,  # Seller ID remains unchanged
+    )
+    return updated_listing
+
+
+@router.delete("/{listing_id}", response_model=Listing)
+async def delete_listing(
+    listing_id: int,
+    db: Cursor = Depends(get_db),
+):
+    # Check if the listing exists
+    existing_listing = db.execute("SELECT * FROM listings WHERE listing_id = %s;" % listing_id).fetchone()
+    if not existing_listing:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    # Delete the listing
+    db.execute("DELETE FROM listings WHERE listing_id = %s;" % listing_id)
+    db.commit()
+
+    return Response(status_code=204)
