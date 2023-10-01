@@ -45,7 +45,11 @@ async def create_listing(
 
 
 @router.get("/{listing_id}", response_model=Listing)
-async def get_listing(listing_id: int, db: Cursor = Depends(get_db)):
+async def get_listing(
+    listing_id: int,
+    db: Cursor = Depends(get_db),
+    current_user: UserData = Depends(get_current_user),
+):
     l = db.execute("SELECT * FROM listings WHERE listing_id = ?;", listing_id).fetchone()
     if not l:
         raise HTTPException(status_code=404, detail="Listing not found")
