@@ -21,6 +21,9 @@ async def create_listing(listing_data: ListingCreate, db: Cursor = Depends(get_d
         listing_data.price,
         listing_data.seller_id,
     )
+
+    db.commit()
+
     # Retrieve the highest ascending ID matching by title or description.
     select_query = """
                 SELECT MAX(listing_id)
