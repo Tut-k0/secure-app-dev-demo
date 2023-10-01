@@ -3,9 +3,11 @@ from pyodbc import Cursor
 
 from app.database import get_db
 from app.routers import listing
+from app.routers import auth
 
 app = FastAPI()
 app.include_router(listing.router)
+app.include_router(auth.router)
 
 
 @app.get("/")
