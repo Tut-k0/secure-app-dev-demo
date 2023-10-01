@@ -42,6 +42,7 @@ GO
 CREATE TABLE media_files (
     file_id INT IDENTITY(1,1) PRIMARY KEY,
     filename NVARCHAR(255) NOT NULL,
+    blob_url NVARCHAR(500) NOT NULL,
     listing_id INT,
     user_id INT,  -- Change profile_id to user_id
     file_type NVARCHAR(50) NOT NULL,
