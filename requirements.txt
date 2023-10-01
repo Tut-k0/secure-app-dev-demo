@@ -1,3 +1,5 @@
 fastapi[all]
 pyodbc
 python-jose
+passlib
+bcrypt

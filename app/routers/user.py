@@ -4,6 +4,7 @@ from pyodbc import Cursor
 from app.database import get_db
 from app.schemas import UserCreate, UserData
 from app.jwt import get_current_user
+from app.utils import hash_password
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -21,6 +22,8 @@ def create_user(user: UserCreate, db: Cursor = Depends(get_db)):
         raise HTTPException(
             status_code=409, detail=f"A user already has the email {existing_user.email}!"
         )
+    # Add password hashing with bcrypt
+    user.password = hash_password(user.password)
 
     db.execute(
         "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",

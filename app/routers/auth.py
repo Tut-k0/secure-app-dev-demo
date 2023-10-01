@@ -5,6 +5,7 @@ from pyodbc import Cursor
 from app.schemas import Token
 from app.database import get_db
 from app.jwt import create_access_token
+from app.utils import verify_password
 
 router = APIRouter(prefix="/login", tags=["Authentication"])
 
@@ -15,7 +16,7 @@ def login(credentials: OAuth2PasswordRequestForm = Depends(), db: Cursor = Depen
     if not user:
         raise HTTPException(status_code=403, detail="User does not exist!")
 
-    if not credentials.password == user.password:
+    if not verify_password(credentials.password, user.password):
         raise HTTPException(status_code=403, detail="Password is incorrect!")
 
     token = create_access_token(
