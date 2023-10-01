@@ -28,15 +28,14 @@ def verify_access_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, ALGORITHM)
 
-        id: str = payload.get("user_id")
+        user_id: str = payload.get("user_id")
 
-        if not id:
+        if not user_id:
             raise credentials_exception
-        token_data = UserData(id=id)
     except JWTError:
         raise credentials_exception
 
-    return token_data
+    return user_id
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Cursor = Depends(get_db)):
@@ -46,8 +45,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Cursor = Depends(g
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    token = verify_access_token(token, credentials_exception)
-    user = db.execute("SELECT * FROM users WHERE user_id = ?", token.user_id).fetchone()
+    user_id = verify_access_token(token, credentials_exception)
+    user = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).fetchone()
 
     return UserData(
         user_id=user.user_id, username=user.username, email=user.email, password=user.password
