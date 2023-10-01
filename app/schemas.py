@@ -5,7 +5,6 @@ class ListingCreate(BaseModel):
     title: str
     description: str = None
     price: float
-    seller_id: int
 
 
 class Listing(BaseModel):

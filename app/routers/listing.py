@@ -24,7 +24,7 @@ async def create_listing(
         listing_data.title,
         listing_data.description,
         listing_data.price,
-        listing_data.seller_id,
+        current_user.user_id,
     )
 
     db.commit()
@@ -40,6 +40,7 @@ async def create_listing(
     # Preparing output object.
     listing = vars(listing_data)
     listing["listing_id"] = listing_id
+    listing["seller_id"] = current_user.user_id
 
     return listing
 
@@ -101,6 +102,8 @@ async def update_listing(
     ).fetchone()
     if not existing_listing:
         raise HTTPException(status_code=404, detail="Listing not found")
+    if current_user.user_id != existing_listing.seller_id:
+        raise HTTPException(status_code=403, detail="You cannot modify other people's listings!")
 
     # Update the listing data
     update_query = """
@@ -140,6 +143,9 @@ async def delete_listing(
     ).fetchone()
     if not existing_listing:
         raise HTTPException(status_code=404, detail="Listing not found")
+    # Check if the current user can delete the listing.from
+    if current_user.user_id != existing_listing.seller_id:
+        raise HTTPException(status_code=403, detail="You cannot delete other people's listings!")
 
     # Delete the listing
     db.execute("DELETE FROM listings WHERE listing_id = ?;", listing_id)
