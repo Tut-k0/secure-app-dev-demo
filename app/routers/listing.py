@@ -82,7 +82,9 @@ async def update_listing(
     listing_data: ListingUpdate,
     db: Cursor = Depends(get_db),
 ):
-    existing_listing = db.execute("SELECT * FROM listings WHERE listing_id = ?;", listing_id).fetchone()
+    existing_listing = db.execute(
+        "SELECT * FROM listings WHERE listing_id = ?;", listing_id
+    ).fetchone()
     if not existing_listing:
         raise HTTPException(status_code=404, detail="Listing not found")
 
@@ -118,7 +120,9 @@ async def delete_listing(
     db: Cursor = Depends(get_db),
 ):
     # Check if the listing exists
-    existing_listing = db.execute("SELECT * FROM listings WHERE listing_id = ?;", listing_id).fetchone()
+    existing_listing = db.execute(
+        "SELECT * FROM listings WHERE listing_id = ?;", listing_id
+    ).fetchone()
     if not existing_listing:
         raise HTTPException(status_code=404, detail="Listing not found")
 
