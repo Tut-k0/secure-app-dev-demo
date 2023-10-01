@@ -48,6 +48,4 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Cursor = Depends(g
     user_id = verify_access_token(token, credentials_exception)
     user = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).fetchone()
 
-    return UserIdentifier(
-        user_id=user.user_id
-    )
+    return UserIdentifier(user_id=user.user_id)

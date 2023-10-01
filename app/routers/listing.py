@@ -132,6 +132,7 @@ async def update_listing(
 async def delete_listing(
     listing_id: int,
     db: Cursor = Depends(get_db),
+    current_user: UserIdentifier = Depends(get_current_user),
 ):
     # Check if the listing exists
     existing_listing = db.execute(

@@ -36,7 +36,9 @@ def create_user(user: UserCreate, db: Cursor = Depends(get_db)):
 
 @router.get("/{user_id}")
 def get_user(
-    user_id: int, db: Cursor = Depends(get_db), current_user: UserIdentifier = Depends(get_current_user)
+    user_id: int,
+    db: Cursor = Depends(get_db),
+    current_user: UserIdentifier = Depends(get_current_user),
 ):
     user = db.execute(
         "SELECT user_id, username, email FROM users WHERE user_id = ?", user_id
