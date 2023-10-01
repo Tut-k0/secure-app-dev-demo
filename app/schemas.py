@@ -28,11 +28,8 @@ class UserCreate(BaseModel):
     password: str
 
 
-class UserData(BaseModel):
+class UserIdentifier(BaseModel):
     user_id: int
-    username: str
-    email: str
-    password: str
 
 
 class Token(BaseModel):

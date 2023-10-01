@@ -2,7 +2,7 @@ from fastapi import HTTPException, Depends, APIRouter, Response
 from pyodbc import Cursor
 
 from app.database import get_db
-from app.schemas import UserCreate, UserData
+from app.schemas import UserCreate, UserIdentifier
 from app.jwt import get_current_user
 from app.utils import hash_password
 
@@ -36,7 +36,7 @@ def create_user(user: UserCreate, db: Cursor = Depends(get_db)):
 
 @router.get("/{user_id}")
 def get_user(
-    user_id: int, db: Cursor = Depends(get_db), current_user: UserData = Depends(get_current_user)
+    user_id: int, db: Cursor = Depends(get_db), current_user: UserIdentifier = Depends(get_current_user)
 ):
     user = db.execute(
         "SELECT user_id, username, email FROM users WHERE user_id = ?", user_id

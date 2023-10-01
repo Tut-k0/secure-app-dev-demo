@@ -7,7 +7,7 @@ from pyodbc import Cursor
 
 from app.config import config
 from app.database import get_db
-from app.schemas import UserData
+from app.schemas import UserIdentifier
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/")
 
@@ -48,6 +48,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Cursor = Depends(g
     user_id = verify_access_token(token, credentials_exception)
     user = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).fetchone()
 
-    return UserData(
-        user_id=user.user_id, username=user.username, email=user.email, password=user.password
+    return UserIdentifier(
+        user_id=user.user_id
     )

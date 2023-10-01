@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter, HTTPException, Response
 from pyodbc import Cursor
 
 from app.database import get_db
-from app.schemas import ListingCreate, Listing, ListingUpdate, UserData
+from app.schemas import ListingCreate, Listing, ListingUpdate, UserIdentifier
 from app.jwt import get_current_user
 
 router = APIRouter(prefix="/listings", tags=["Listings"])
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/listings", tags=["Listings"])
 async def create_listing(
     listing_data: ListingCreate,
     db: Cursor = Depends(get_db),
-    current_user: UserData = Depends(get_current_user),
+    current_user: UserIdentifier = Depends(get_current_user),
 ):
     # Insert new listing.
     insert_query = """
@@ -48,7 +48,7 @@ async def create_listing(
 async def get_listing(
     listing_id: int,
     db: Cursor = Depends(get_db),
-    current_user: UserData = Depends(get_current_user),
+    current_user: UserIdentifier = Depends(get_current_user),
 ):
     l = db.execute("SELECT * FROM listings WHERE listing_id = ?;", listing_id).fetchone()
     if not l:
@@ -66,7 +66,7 @@ async def get_listing(
 async def get_listings(
     keyword: str | None = None,
     db: Cursor = Depends(get_db),
-    current_user: UserData = Depends(get_current_user),
+    current_user: UserIdentifier = Depends(get_current_user),
 ):
     if keyword:
         # Use a parameterized query to avoid SQL injection
@@ -94,7 +94,7 @@ async def update_listing(
     listing_id: int,
     listing_data: ListingUpdate,
     db: Cursor = Depends(get_db),
-    current_user: UserData = Depends(get_current_user),
+    current_user: UserIdentifier = Depends(get_current_user),
 ):
     existing_listing = db.execute(
         "SELECT * FROM listings WHERE listing_id = ?;", listing_id
