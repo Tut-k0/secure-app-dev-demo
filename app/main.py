@@ -2,12 +2,13 @@ from fastapi import FastAPI, Depends
 from pyodbc import Cursor
 
 from app.database import get_db
-from app.routers import listing, auth, user
+from app.routers import listing, auth, user, upload
 
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(listing.router)
+app.include_router(upload.router)
 
 
 @app.get("/")
