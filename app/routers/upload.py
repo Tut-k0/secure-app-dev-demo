@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from fastapi import HTTPException, Depends, APIRouter, UploadFile, File
 from pyodbc import Cursor
-from azure.storage.blob import BlobClient
+from azure.storage.blob import BlobClient, BlobServiceClient
 
 from app.config import config
 from app.database import get_db
@@ -74,13 +74,13 @@ async def upload_listing_image(
             detail="Invalid image format. Only JPEG and PNG images are allowed.",
         )
 
-    # Continue with the upload process
+    service_client = BlobServiceClient.from_connection_string(config.azure_blob_connection_string)
     blob_name = f"{uuid4()}.{file_extension}"
     blob_url = (
         f"{config.azure_blob_storage_name}.blob.core.windows.net/"
         f"{config.azure_blob_container_name}/{blob_name}?{config.azure_blob_sas_token}"
     )
-    blob_client = BlobClient.from_blob_url(blob_url)
+    blob_client = service_client.get_blob_client(container=config.azure_blob_container_name, blob=blob_name)
 
     # Reset the file pointer before uploading
     await file.seek(0)
@@ -141,12 +141,13 @@ async def upload_profile_picture(
             detail="Invalid image format. Only JPEG and PNG images are allowed.",
         )
     # Continue with the upload process
+    service_client = BlobServiceClient.from_connection_string(config.azure_blob_connection_string)
     blob_name = f"{uuid4()}.{file_extension}"
     blob_url = (
         f"{config.azure_blob_storage_name}.blob.core.windows.net/"
         f"{config.azure_blob_container_name}/{blob_name}?{config.azure_blob_sas_token}"
     )
-    blob_client = BlobClient.from_blob_url(blob_url)
+    blob_client = service_client.get_blob_client(container=config.azure_blob_container_name, blob=blob_name)
 
     # Reset the file pointer before uploading
     await file.seek(0)
