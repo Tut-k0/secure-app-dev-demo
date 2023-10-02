@@ -3,3 +3,4 @@ pyodbc
 python-jose
 passlib
 bcrypt
+azure-storage-blob
