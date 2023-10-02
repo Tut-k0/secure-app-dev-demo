@@ -14,6 +14,7 @@ class Listing(BaseModel):
     description: str
     price: float
     seller_id: int
+    pictures: list[str] = []
 
 
 class ListingUpdate(BaseModel):
@@ -33,6 +34,7 @@ class UserData(BaseModel):
     username: str
     email: str
     password: str
+    profile_picture_url: str = None
 
 
 class Token(BaseModel):

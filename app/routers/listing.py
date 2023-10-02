@@ -42,12 +42,20 @@ async def get_listing(
     l = db.execute("SELECT * FROM listings WHERE listing_id = %d;" % listing_id).fetchone()
     if not l:
         raise HTTPException(status_code=404, detail="Listing not found")
+
+    # Retrieve the blob URLs associated with the listing
+    blob_urls = db.execute(
+        "SELECT blob_url FROM media_files WHERE listing_id = ? AND file_type = 'image'",
+        listing_id,
+    ).fetchall()
+
     return Listing(
         listing_id=l.listing_id,
         title=l.title,
         description=l.description,
         price=l.price,
         seller_id=l.seller_id,
+        pictures=[url[0] for url in blob_urls],
     )
 
 
@@ -68,9 +76,21 @@ async def get_listings(
 
     db.execute(query)
     cols = [column[0] for column in db.description]
-    listings = db.fetchall()
+    listings = [Listing(**dict(zip(cols, row))) for row in db.fetchall()]
 
-    return [Listing(**dict(zip(cols, row))) for row in listings]
+    for listing in listings:
+        blob_urls = db.execute(
+            "SELECT blob_url FROM media_files WHERE listing_id = ? AND file_type = 'image'",
+            listing.listing_id,
+        ).fetchall()
+
+        # Extract the URLs from the query result
+        picture_urls = [url[0] for url in blob_urls]
+
+        # Include the blob URLs in each listing response
+        listing.pictures = picture_urls
+
+    return listings
 
 
 @router.put("/{listing_id}", response_model=Listing)

@@ -41,4 +41,16 @@ def get_user(
     if not user:
         raise HTTPException(status_code=404, detail="User does not exist!")
 
-    return {"user_id": user.user_id, "username": user.username, "email": user.email}
+    # Retrieve the profile picture URL associated with the user
+    profile_picture_url = db.execute(
+        "SELECT blob_url FROM media_files WHERE user_id = ? AND file_type = 'image'",
+        user_id,
+    ).fetchone()
+
+    # Include the profile picture URL in the response
+    return {
+        "user_id": user.user_id,
+        "username": user.username,
+        "email": user.email,
+        "profile_picture_url": profile_picture_url.blob_url,
+    }
