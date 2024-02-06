@@ -4,3 +4,4 @@ python-jose
 passlib
 bcrypt
 azure-storage-blob
+fastapi>=0.109.1 # not directly required, pinned by Snyk to avoid a vulnerability
